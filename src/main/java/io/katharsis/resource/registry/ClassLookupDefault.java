@@ -33,9 +33,7 @@ public class ClassLookupDefault implements ClassLookup {
 
     public ClassLookupDefault(final String ... searchPackages) {
         this.searchPackages = searchPackages;
-        final URLClassLoader urlClassLoader =
-                (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        clazzes = Stream.of(urlClassLoader.getURLs())
+        clazzes = Stream.of(System.getProperty("java.class.path").split(File.pathSeparator))
                 .flatMap(this::uriToEntries)
                 .filter(this::includeEntry)
                 .flatMap(name -> {
@@ -53,6 +51,7 @@ public class ClassLookupDefault implements ClassLookup {
     public Set<Class<?>> getTypesAnnotatedWith(final Class<? extends Annotation> annotation) {
         return getClassStream()
                 .filter(clazz -> clazz.isAnnotationPresent(annotation))
+                .map(clazz -> (Class<?>) clazz)
                 .collect(Collectors.toSet());
     }
 
@@ -60,22 +59,24 @@ public class ClassLookupDefault implements ClassLookup {
         return clazzes.stream();
     }
 
-    private final Stream<String> uriToEntries(final URL url) {
+    private final Stream<String> uriToEntries(final String classpathEntry) {
         try {
-            final File file = new File(url.toURI());
+            final File file = new File(classpathEntry);
             if (file.isDirectory()) {
+                log.debug("Adding classpath directory {}", file);
                 final Path p = file.toPath();
                 return Files.walk(p).map(path -> {
                     final String relativePath = p.relativize(path).toString();
                     return relativePath;
                 });
-            } else {
+            } else if (file.getName().endsWith(".jar")) {
+                log.debug("Adding jar file {}", file);
                 return new ZipFile(file).stream().map(ZipEntry::getName);
             }
-        } catch (URISyntaxException | IOException e) {
-            log.warn("Failed to open classpath entry {}", url, e);
-            return Stream.empty();
+        } catch (IOException e) {
+            log.warn("Failed to open classpath entry {}", classpathEntry, e);
         }
+        return Stream.empty();
     }
 
     private boolean includeEntry(final String name) {
