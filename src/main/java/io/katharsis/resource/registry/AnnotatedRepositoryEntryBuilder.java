@@ -8,7 +8,6 @@ import io.katharsis.resource.registry.repository.AnnotatedRelationshipEntryBuild
 import io.katharsis.resource.registry.repository.AnnotatedResourceEntryBuilder;
 import io.katharsis.resource.registry.repository.RelationshipEntry;
 import io.katharsis.resource.registry.repository.ResourceEntry;
-import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -27,7 +26,7 @@ public class AnnotatedRepositoryEntryBuilder implements RepositoryEntryBuilder {
     }
 
     @Override
-    public ResourceEntry<?, ?> buildResourceRepository(Reflections reflections, Class<?> resourceClass) {
+    public ResourceEntry<?, ?> buildResourceRepository(ClassLookup reflections, Class<?> resourceClass) {
         Predicate<Class<?>> classPredicate =
             clazz -> resourceClass.equals(clazz.getAnnotation(JsonApiResourceRepository.class).value());
 
@@ -40,7 +39,7 @@ public class AnnotatedRepositoryEntryBuilder implements RepositoryEntryBuilder {
     }
 
     @Override
-    public List<RelationshipEntry<?, ?>> buildRelationshipRepositories(Reflections reflections, Class<?> resourceClass) {
+    public List<RelationshipEntry<?, ?>> buildRelationshipRepositories(ClassLookup reflections, Class<?> resourceClass) {
         Predicate<Class<?>> classPredicate =
             clazz -> resourceClass.equals(clazz.getAnnotation(JsonApiRelationshipRepository.class).source());
 
@@ -50,7 +49,7 @@ public class AnnotatedRepositoryEntryBuilder implements RepositoryEntryBuilder {
             .collect(Collectors.toList());
     }
 
-    private List<Object> findRepositoryObject(Reflections reflections, Predicate<Class<?>> classPredicate, Class<? extends Annotation> annotation) {
+    private List<Object> findRepositoryObject(ClassLookup reflections, Predicate<Class<?>> classPredicate, Class<? extends Annotation> annotation) {
         return reflections.getTypesAnnotatedWith(annotation).stream()
             .filter(classPredicate)
             .map(clazz -> {

@@ -5,7 +5,6 @@ import io.katharsis.repository.NotFoundRepository;
 import io.katharsis.resource.registry.repository.DirectResourceEntry;
 import io.katharsis.resource.registry.repository.RelationshipEntry;
 import io.katharsis.resource.registry.repository.ResourceEntry;
-import org.reflections.Reflections;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +24,7 @@ public class RepositoryEntryBuilderFacade implements RepositoryEntryBuilder {
     }
 
     @Override
-    public ResourceEntry<?, ?> buildResourceRepository(Reflections reflections, Class<?> resourceClass) {
+    public ResourceEntry<?, ?> buildResourceRepository(ClassLookup reflections, Class<?> resourceClass) {
         ResourceEntry<?, ?> resourceEntry = annotatedRepositoryEntryBuilder
             .buildResourceRepository(reflections, resourceClass);
         if (resourceEntry == null) {
@@ -39,7 +38,7 @@ public class RepositoryEntryBuilderFacade implements RepositoryEntryBuilder {
     }
 
     @Override
-    public List<RelationshipEntry<?, ?>> buildRelationshipRepositories(Reflections reflections, Class<?> resourceClass) {
+    public List<RelationshipEntry<?, ?>> buildRelationshipRepositories(ClassLookup reflections, Class<?> resourceClass) {
         List<RelationshipEntry<?, ?>> annotationEntries = annotatedRepositoryEntryBuilder
             .buildRelationshipRepositories(reflections, resourceClass);
         List<RelationshipEntry<?, ?>> targetEntries = new LinkedList<>(annotationEntries);

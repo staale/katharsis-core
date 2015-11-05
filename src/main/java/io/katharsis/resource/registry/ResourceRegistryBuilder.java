@@ -6,7 +6,6 @@ import io.katharsis.resource.information.ResourceInformation;
 import io.katharsis.resource.information.ResourceInformationBuilder;
 import io.katharsis.resource.registry.repository.RelationshipEntry;
 import io.katharsis.resource.registry.repository.ResourceEntry;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,14 +39,13 @@ public class ResourceRegistryBuilder {
      * @return an instance of ResourceRegistry
      */
     public ResourceRegistry build(String packageName, @SuppressWarnings("SameParameterValue") String serviceUrl) {
-        Reflections reflections;
+        ClassLookup reflections;
         if (packageName != null) {
             String[] packageNames = packageName.split(",");
-            reflections = new Reflections(packageNames);
+            reflections = new ClassLookupDefault(packageNames);
         } else {
-            reflections = new Reflections(packageName);
+            reflections = new ClassLookupDefault();
         }
-
 
         Set<Class<?>> jsonApiResources = reflections.getTypesAnnotatedWith(JsonApiResource.class);
         Set<ResourceInformation> resourceInformationSet = jsonApiResources.stream()

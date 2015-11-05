@@ -9,7 +9,6 @@ import io.katharsis.resource.registry.repository.DirectResourceEntry;
 import io.katharsis.resource.registry.repository.RelationshipEntry;
 import io.katharsis.resource.registry.repository.ResourceEntry;
 import net.jodah.typetools.TypeResolver;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public class DirectRepositoryEntryBuilder implements RepositoryEntryBuilder {
     }
 
     @Override
-    public ResourceEntry<?, ?> buildResourceRepository(Reflections reflections, Class<?> resourceClass) {
+    public ResourceEntry<?, ?> buildResourceRepository(ClassLookup reflections, Class<?> resourceClass) {
         Optional<Class<? extends ResourceRepository>> repoClass = reflections.getSubTypesOf(ResourceRepository.class)
             .stream()
             .filter(clazz -> {
@@ -47,7 +46,7 @@ public class DirectRepositoryEntryBuilder implements RepositoryEntryBuilder {
     }
 
     @Override
-    public List<RelationshipEntry<?, ?>> buildRelationshipRepositories(Reflections reflections, Class<?> resourceClass) {
+    public List<RelationshipEntry<?, ?>> buildRelationshipRepositories(ClassLookup reflections, Class<?> resourceClass) {
         Set<Class<? extends RelationshipRepository>> relationshipRepositoryClasses = reflections
             .getSubTypesOf(RelationshipRepository.class);
 

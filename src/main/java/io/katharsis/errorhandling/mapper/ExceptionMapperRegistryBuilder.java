@@ -1,7 +1,8 @@
 package io.katharsis.errorhandling.mapper;
 
 import io.katharsis.resource.exception.init.InvalidResourceException;
-import org.reflections.Reflections;
+import io.katharsis.resource.registry.ClassLookup;
+import io.katharsis.resource.registry.ClassLookupDefault;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,12 +28,12 @@ public final class ExceptionMapperRegistryBuilder {
     }
 
     private void scanForCustomMappers(String resourceSearchPackage) throws InstantiationException, IllegalAccessException {
-        Reflections reflections;
+        ClassLookup reflections;
         if (resourceSearchPackage != null) {
             String[] packageNames = resourceSearchPackage.split(",");
-            reflections = new Reflections(packageNames);
+            reflections = new ClassLookupDefault(packageNames);
         } else {
-            reflections = new Reflections(resourceSearchPackage);
+            reflections = new ClassLookupDefault(resourceSearchPackage);
         }
         Set<Class<?>> exceptionMapperClasses = reflections.getTypesAnnotatedWith(ExceptionMapperProvider.class);
 

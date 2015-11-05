@@ -5,9 +5,10 @@ import io.katharsis.dispatcher.controller.BaseController;
 import io.katharsis.dispatcher.controller.resource.ResourceIncludeField;
 import io.katharsis.dispatcher.controller.resource.ResourceUpsert;
 import io.katharsis.resource.include.IncludeLookupSetter;
+import io.katharsis.resource.registry.ClassLookup;
+import io.katharsis.resource.registry.ClassLookupDefault;
 import io.katharsis.resource.registry.ResourceRegistry;
 import io.katharsis.utils.parser.TypeParser;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +45,7 @@ public class ControllerRegistryBuilder {
     public ControllerRegistry build() throws Exception {
 
 
-        Reflections reflections = new Reflections("io.katharsis.dispatcher.controller");
+        ClassLookup reflections = new ClassLookupDefault("io.katharsis.dispatcher.controller");
 
         Set<Class<? extends BaseController>> controllerClasses =
                 reflections.getSubTypesOf(BaseController.class);
